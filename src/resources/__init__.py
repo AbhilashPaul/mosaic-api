@@ -3,8 +3,9 @@ from flask_restful import reqparse
 import requests
 from functools import lru_cache
 from src.custom_error_responses import tag_error, sort_by_error, direction_error
+from src.services import BlogPostDataService
 
-data_provider_api_base_url = "https://hatchways.io/api/assessment/blog/posts"
+
 valid_sortby_fields = ["id", "reads", "likes", "popularity"]
 valid_sorting_directions = ["asc", "desc"]
 
@@ -35,21 +36,8 @@ class Posts(Resource):
                 return direction_error, 400
 
             try:
-                blog_posts = self.gather_blog_posts(sort_by, direction, tags)
+                blog_posts = BlogPostDataService.gather_blog_posts(sort_by, direction, tags)
                 return {"posts": blog_posts}, 200
             except Exception as ex:
                 return {"error": f"Server error: {str(ex)}"}, 500
-                
-
-        def gather_blog_posts(self, sort_by, direction, tags):
-            blog_posts = []
-            for tag in tags:
-                response = requests.get(
-                        f"{data_provider_api_base_url}?tag={tag.strip()}"
-                    ).json()
-                blog_posts += response["posts"]
-
-            is_desc = True if direction == "desc" else False
-            blog_posts_sorted = sorted(blog_posts, key=lambda x: x[sort_by], reverse=is_desc)
-            return blog_posts_sorted
                         
