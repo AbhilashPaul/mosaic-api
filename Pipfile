@@ -1,0 +1,16 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+ipykernel = "*"
+
+[packages]
+flask-restful = "*"
+python-dotenv = "*"
+requests = "*"
+flask = "*"
+
+[requires]
+python_version = "3.9"
